@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mall Management Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #222;
+    }
+    h2 {
+      border-bottom: 2px solid #0078d7;
+      padding-bottom: 5px;
+      color: #0078d7;
+    }
+    .section {
+      margin-bottom: 40px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #0078d7;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f0f8ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏬 Mall Management Dashboard</h1>
+
+  <div class="section">
+    <h2>Malls</h2>
+    <table id="mallTable"></table>
+  </div>
+
+  <div class="section">
+    <h2>Shops</h2>
+    <table id="shopTable"></table>
+  </div>
+
+  <div class="section">
+    <h2>Restaurants</h2>
+    <table id="restaurantTable"></table>
+  </div>
+
+  <div class="section">
+    <h2>Orders</h2>
+    <table id="orderTable"></table>
+  </div>
+
+  <div class="section">
+    <h2>Customers</h2>
+    <table id="customerTable"></table>
+  </div>
+
+  <script>
+    const API = 'http://localhost:3000/api';
+
+    async function loadData(endpoint, tableId, columns) {
+      const res = await fetch(`${API}/${endpoint}`);
+      const data = await res.json();
+
+      const table = document.getElementById(tableId);
+      if (!data.length) {
+        table.innerHTML = "<tr><td>No data found</td></tr>";
+        return;
+      }
+
+      // Create header row
+      const headers = Object.keys(data[0]);
+      table.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
+
+      // Create data rows
+      data.forEach(row => {
+        table.innerHTML += "<tr>" + headers.map(h => `<td>${row[h]}</td>`).join('') + "</tr>";
+      });
+    }
+
+    // Load all tables
+    loadData('malls', 'mallTable');
+    loadData('shops', 'shopTable');
+    loadData('restaurants', 'restaurantTable');
+    loadData('orders', 'orderTable');
+    loadData('customers', 'customerTable');
+  </script>
+</body>
+</html>
