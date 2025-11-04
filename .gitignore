@@ -1,0 +1,10 @@
+# Ignore environment variable files
+.env
+.env.local
+
+# Node dependencies
+node_modules/
+
+# Logs and cache
+*.log
+.DS_Store
