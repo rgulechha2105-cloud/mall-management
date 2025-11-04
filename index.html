@@ -3,107 +3,195 @@
 <head>
   <meta charset="UTF-8" />
   <title>Mall Management Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --primary: #0078d7;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #1a1a1a;
+      --subtext: #555;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
+      font-family: "Inter", sans-serif;
+      background: var(--bg) url("https://images.unsplash.com/photo-1582582428608-b7e6baad090e?auto=format&fit=crop&w=1600&q=80") no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
       margin: 0;
-      padding: 20px;
-      color: #333;
+      padding: 0;
     }
-    h1 {
+
+    /* --- Overlay for readability --- */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.7);
+      z-index: -1;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
       text-align: center;
-      margin-bottom: 30px;
-      color: #222;
+      padding: 25px 10px;
+      font-size: 26px;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
+
+    main {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px;
+    }
+
+    section {
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      padding: 20px 25px;
+      transition: all 0.3s ease;
+    }
+
+    section:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    }
+
     h2 {
-      border-bottom: 2px solid #0078d7;
-      padding-bottom: 5px;
-      color: #0078d7;
+      margin-top: 0;
+      color: var(--primary);
+      font-size: 22px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 6px;
     }
-    .section {
-      margin-bottom: 40px;
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
+
     th, td {
+      padding: 10px 14px;
       text-align: left;
-      padding: 10px;
       border-bottom: 1px solid #ddd;
     }
+
     th {
-      background-color: #0078d7;
+      background: var(--primary);
       color: white;
+      font-weight: 500;
     }
-    tr:hover {
-      background-color: #f0f8ff;
+
+    tr:hover td {
+      background: #eef6ff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #fff;
+      margin-top: 40px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      color: var(--subtext);
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      main { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <h1>🏬 Mall Management Dashboard</h1>
+  <header>🏬 Mall Management Dashboard</header>
 
-  <div class="section">
-    <h2>Malls</h2>
-    <table id="mallTable"></table>
-  </div>
+  <main>
+    <section>
+      <h2>Malls</h2>
+      <table id="mallTable"></table>
+    </section>
 
-  <div class="section">
-    <h2>Shops</h2>
-    <table id="shopTable"></table>
-  </div>
+    <section>
+      <h2>Shops</h2>
+      <table id="shopTable"></table>
+    </section>
 
-  <div class="section">
-    <h2>Restaurants</h2>
-    <table id="restaurantTable"></table>
-  </div>
+    <section>
+      <h2>Restaurants</h2>
+      <table id="restaurantTable"></table>
+    </section>
 
-  <div class="section">
-    <h2>Orders</h2>
-    <table id="orderTable"></table>
-  </div>
+    <section>
+      <h2>Parking</h2>
+      <table id="parkingTable"></table>
+    </section>
 
-  <div class="section">
-    <h2>Customers</h2>
-    <table id="customerTable"></table>
-  </div>
+    <section>
+      <h2>Employees</h2>
+      <table id="employeeTable"></table>
+    </section>
+
+    <section>
+      <h2>Customers</h2>
+      <table id="customerTable"></table>
+    </section>
+
+    <section>
+      <h2>Bookings</h2>
+      <table id="bookingTable"></table>
+    </section>
+
+    <section>
+      <h2>Orders</h2>
+      <table id="orderTable"></table>
+    </section>
+  </main>
+
+  <footer>© 2025 Mall Management System | Designed by <b>Rishabh Gulechha</b></footer>
 
   <script>
     const API = 'http://localhost:3000/api';
 
-    async function loadData(endpoint, tableId, columns) {
-      const res = await fetch(`${API}/${endpoint}`);
-      const data = await res.json();
+    async function loadData(endpoint, tableId) {
+      try {
+        const res = await fetch(`${API}/${endpoint}`);
+        const data = await res.json();
+        const table = document.getElementById(tableId);
 
-      const table = document.getElementById(tableId);
-      if (!data.length) {
-        table.innerHTML = "<tr><td>No data found</td></tr>";
-        return;
+        if (!data.length) {
+          table.innerHTML = "<tr><td>No data found</td></tr>";
+          return;
+        }
+
+        const headers = Object.keys(data[0]);
+        table.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
+
+        data.forEach(row => {
+          table.innerHTML += "<tr>" + headers.map(h => `<td>${row[h]}</td>`).join('') + "</tr>";
+        });
+      } catch {
+        const table = document.getElementById(tableId);
+        table.innerHTML = "<tr><td style='color:red;'>Error loading data</td></tr>";
       }
-
-      // Create header row
-      const headers = Object.keys(data[0]);
-      table.innerHTML = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
-
-      // Create data rows
-      data.forEach(row => {
-        table.innerHTML += "<tr>" + headers.map(h => `<td>${row[h]}</td>`).join('') + "</tr>";
-      });
     }
 
-    // Load all tables
     loadData('malls', 'mallTable');
     loadData('shops', 'shopTable');
     loadData('restaurants', 'restaurantTable');
-    loadData('orders', 'orderTable');
+    loadData('parking', 'parkingTable');
+    loadData('employees', 'employeeTable');
     loadData('customers', 'customerTable');
+    loadData('bookings', 'bookingTable');
+    loadData('orders', 'orderTable');
   </script>
 </body>
 </html>
